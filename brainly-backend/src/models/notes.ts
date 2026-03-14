@@ -1,4 +1,6 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, SchemaType } from "mongoose";
+import { ref } from "node:process";
+import { User } from "./user.js";
 
 interface Inote extends Document {
   title: Object;
@@ -23,6 +25,18 @@ const noteSchema = new Schema<Inote>(
   { timestamps: true },
 );
 
-const noteModel = model<Inote>("Notes", noteSchema);
+const linkSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: User
+  },
+  hash: {
+    type: String,
+  }
 
-export default noteModel;
+})
+
+const Links = model("Link", linkSchema);
+const Notes = model<Inote>("Notes", noteSchema);
+
+export { Notes  , Links};
