@@ -52,12 +52,33 @@ router.post("/create-note", async (req: Request, res: Response) => {
   }
 });
 
-router.put(":id", (req, res) => {
-  // updatenotes
-});
+// router.put(":id", (req, res) => {
+//   // updatenotes
+// });
 
-router.delete(":id", (req, res) => {
+router.delete("/:id", async (req: Request , res: Response) => {
   // deleteNotesById
+  try {
+    const id = req.params.id;
+
+    const note = await Notes.findByIdAndDelete(id);
+
+    if (!note) {
+      return res.status(404).json({
+        msg: "Note not found",
+      });
+    }
+
+    return res.json({
+      msg: "Note deleted successfully",
+      deletedNote: note,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error deleting note",
+      error,
+    });
+  }
 });
 
 export default router;
