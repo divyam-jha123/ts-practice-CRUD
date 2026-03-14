@@ -1,5 +1,4 @@
-import { Schema, model, Document, SchemaType } from "mongoose";
-import { ref } from "node:process";
+import { Schema, model, Document } from "mongoose";
 import { User } from "./user.js";
 
 interface Inote extends Document {
@@ -13,6 +12,7 @@ const noteSchema = new Schema<Inote>(
   {
     title: {
       type: Schema.Types.ObjectId,
+      ref: "User",
       required: [true, "title is required"],
       trim: true,
     },
