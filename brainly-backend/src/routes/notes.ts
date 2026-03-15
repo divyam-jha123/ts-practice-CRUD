@@ -41,7 +41,7 @@ router.post(
   async (req: Request, res: Response) => {
     // create notes
     try {
-      const { title, content } = req.body;
+      const { title, link } = req.body;
       const { userId } = getAuth(req);
 
       if (!userId) {
@@ -50,7 +50,7 @@ router.post(
 
       await Notes.create({
         title: title,
-        content: content,
+        content: link,
         userId: userId,
       });
 
