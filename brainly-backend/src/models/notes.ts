@@ -1,9 +1,9 @@
 import { Schema, model, Document } from "mongoose";
-import { User } from "./user.js";
 
 interface Inote extends Document {
-  title: Object;
+  title: string;
   content: string;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -11,8 +11,7 @@ interface Inote extends Document {
 const noteSchema = new Schema<Inote>(
   {
     title: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: [true, "title is required"],
       trim: true,
     },
@@ -21,22 +20,24 @@ const noteSchema = new Schema<Inote>(
       required: true,
       trim: true,
     },
+    userId: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true },
 );
 
 const linkSchema = new Schema({
   userId: {
-    type: Schema.Types.ObjectId,
-    ref: User
+    type: String,
   },
   hash: {
     type: String,
-  }
-
-})
+  },
+});
 
 const Links = model("Link", linkSchema);
 const Notes = model<Inote>("Notes", noteSchema);
 
-export { Notes  , Links};
+export { Notes, Links };

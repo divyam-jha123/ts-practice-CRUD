@@ -13,8 +13,6 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
-    "rootDir": "./src",
-    "outDir": "./dist",
 
     /* Linting */
     "strict": true,

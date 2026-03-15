@@ -1,24 +1,28 @@
 import { Router, Request, Response } from "express";
 import { Notes, Links } from "../models/notes.js";
-import { authMiddleware } from "../middlewares/auth.js";
+import { requireAuth, getAuth } from "../middlewares/auth.js";
 import { generateRandom } from "../utils/util.js";
+
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", requireAuth(), async (req: Request, res: Response) => {
   // dashboard
+  const { userId } = getAuth(req);
+
+  const post = await Notes.find({ userId: userId });
+
   return res.json({
     msg: "welcome to a server written in typescript",
+    post,
   });
 });
 
-router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
+router.get("/:id", requireAuth(), async (req: Request, res: Response) => {
   // getNotesById
   try {
     const id = req.params.id;
 
-    const note = await Notes.findById({
-      id,
-    });
+    const note = await Notes.findById(id);
 
     return res.json({
       msg: note,
@@ -33,15 +37,21 @@ router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
 
 router.post(
   "/create-note",
-  authMiddleware,
+  requireAuth(),
   async (req: Request, res: Response) => {
     // create notes
     try {
       const { title, content } = req.body;
+      const { userId } = getAuth(req);
+
+      if (!userId) {
+        return res.status(401).json({ msg: "Not authenticated" });
+      }
 
       await Notes.create({
         title: title,
         content: content,
+        userId: userId,
       });
 
       return res.json({
@@ -55,7 +65,7 @@ router.post(
   },
 );
 
-router.delete("/:id", authMiddleware, async (req: Request, res: Response) => {
+router.delete("/:id", requireAuth(), async (req: Request, res: Response) => {
   // deleteNotesById
   try {
     const id = req.params.id;
@@ -80,14 +90,14 @@ router.delete("/:id", authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-router.post("/api/share", authMiddleware, async (req, res) => {
+router.post("/api/share", requireAuth(), async (req: Request, res: Response) => {
   // generate and store sharable link -> seperate for every user
   const share = req.body.share;
-  const userId = req.body.userId;
+  const { userId } = getAuth(req);
 
   const existingLink = await Links.findOne({
     userId: userId,
-  })
+  });
 
   if (existingLink) {
     res.json({
@@ -97,7 +107,7 @@ router.post("/api/share", authMiddleware, async (req, res) => {
 
     return;
   }
-  const hash = generateRandom(userId);
+  const hash = generateRandom(userId as unknown as number);
   if (share) {
     // generate a sharable link
     await Links.create({
@@ -116,7 +126,7 @@ router.post("/api/share", authMiddleware, async (req, res) => {
   });
 });
 
-router.get('/api/share/:hash', async (req, res) => {
+router.get('/api/share/:hash', async (req: Request, res: Response) => {
   const hash = req.params.hash;
 
   const link = await Links.findOne({ hash });

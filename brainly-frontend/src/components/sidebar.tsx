@@ -5,6 +5,7 @@ import { VideoIcon } from "../icons/videoIcon";
 import { DocumentIcon } from "../icons/documentIcon";
 import { LinkIcon } from "../icons/linkIcon";
 import { TagIcon } from "../icons/tagIcon";
+import { UserButton } from "@clerk/react";
 
 export const Sidebar = () => {
   return (
@@ -16,13 +17,26 @@ export const Sidebar = () => {
         <h1 className="text-xl font-bold text-gray-900">Second Brain</h1>
       </div>
 
-      <nav className="flex flex-col gap-1 px-3 mt-2">
+      <nav className="flex flex-col gap-1 px-3 mt-2 flex-1">
         <SidebarItem text="Tweets" icon={<TwitterIcon size="md" />} />
         <SidebarItem text="Videos" icon={<VideoIcon size="md" />} />
         <SidebarItem text="Documents" icon={<DocumentIcon size="md" />} />
         <SidebarItem text="Links" icon={<LinkIcon size="md" />} />
         <SidebarItem text="Tags" icon={<TagIcon size="md" />} />
       </nav>
+
+      {/* User profile / sign out at the bottom */}
+      <div className="px-5 py-4 border-t border-gray-200">
+        <UserButton
+          appearance={{
+            elements: {
+              rootBox: "w-full",
+              userButtonTrigger: "w-full justify-start",
+            },
+          }}
+          showName
+        />
+      </div>
     </div>
   );
 };
