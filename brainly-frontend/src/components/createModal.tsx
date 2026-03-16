@@ -53,7 +53,7 @@ export const CreateModal = ({ isOpen, onClose, onSubmit }: CreateModalProps) => 
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
+                <div className="flex items-center justify-between p-4">
                     <h2 className="text-xl font-semibold text-gray-800">Add New Content</h2>
                     <button
                         onClick={handleClose}
@@ -99,7 +99,7 @@ export const CreateModal = ({ isOpen, onClose, onSubmit }: CreateModalProps) => 
                         />
                     </div>
 
-                    {/* Content Type Selection (Optional) */}
+                    {/* Content Type Selection */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Content Type
@@ -112,7 +112,7 @@ export const CreateModal = ({ isOpen, onClose, onSubmit }: CreateModalProps) => 
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 p-4 border-t bg-gray-50">
+                <div className="flex items-center justify-end gap-3 p-4 bg-gray-50">
                     <Button
                         varient="primary"
                         size="md"

@@ -2,20 +2,33 @@ import axios from "axios";
 import { useAuth, useUser } from "@clerk/react";
 import { Button } from "./button";
 import { Sidebar } from "./sidebar";
+import type { ContentFilter } from "./sidebar";
 import { Card } from "./card";
 import { PlusIcon } from "../icons/plus";
 import { ShareIcon } from "../icons/shareIcon";
 import { CreateModal } from "../components/createModal";
 import { ShareModal } from "../components/shareModal";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { API_URL } from "../config";
 
 export const Dashboard = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
   const [notes, setNotes] = useState<any[]>([]);
+  const [activeFilter, setActiveFilter] = useState<ContentFilter>("all");
   const { getToken } = useAuth();
   const { user } = useUser();
+
+  const getContentType = (content: string | undefined): "tweet" | "video" | "document" => {
+    if (content?.includes("youtube")) return "video";
+    if (content?.includes("twitter") || content?.includes("x.com")) return "tweet";
+    return "document";
+  };
+
+  const filteredNotes = useMemo(() => {
+    if (activeFilter === "all") return notes;
+    return notes.filter((note) => getContentType(note.content) === activeFilter);
+  }, [notes, activeFilter]);
 
   const getData = useCallback(async () => {
     try {
@@ -84,7 +97,7 @@ export const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar activeFilter={activeFilter} onFilterChange={setActiveFilter} />
       <CreateModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -105,7 +118,9 @@ export const Dashboard = () => {
       <div className="ml-64 flex-1 p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">All Notes</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {activeFilter === "all" ? "All Notes" : activeFilter === "tweet" ? "Tweets" : activeFilter === "video" ? "Videos" : "Documents"}
+          </h2>
           <div className="flex gap-3">
             <Button
               varient="secondary"
@@ -126,11 +141,11 @@ export const Dashboard = () => {
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <Card
               key={note._id}
               title={note.title}
-              type={note.content?.includes("youtube") ? "video" : note.content?.includes("twitter") || note.content?.includes("x.com") ? "tweet" : "document"}
+              type={getContentType(note.content)}
               content={note.content}
               tags={["content"]}
               addedDate={new Date(note.createdAt).toLocaleDateString()}

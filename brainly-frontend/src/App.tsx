@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { RedirectToSignIn, SignIn, SignUp, useAuth } from '@clerk/react';
+import { SignIn, SignUp, useAuth } from '@clerk/react';
 import { Dashboard } from './components/dashboard';
 import { SharedDashboard } from './components/sharedDashboard';
+import { LandingPage } from './components/landingPage';
 
 export default function App() {
   return (
@@ -9,6 +10,11 @@ export default function App() {
       <Routes>
         <Route
           path="/"
+          element={<HomePage />}
+        />
+
+        <Route
+          path="/dashboard"
           element={<ProtectedDashboard />}
         />
 
@@ -16,7 +22,7 @@ export default function App() {
           path="/sign-in/*"
           element={
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
-              <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" />
+              <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" forceRedirectUrl="/dashboard" />
             </div>
           }
         />
@@ -25,7 +31,7 @@ export default function App() {
           path="/sign-up/*"
           element={
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
-              <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" />
+              <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" forceRedirectUrl="/dashboard" />
             </div>
           }
         />
@@ -36,6 +42,25 @@ export default function App() {
       </Routes>
     </BrowserRouter>
   )
+}
+
+function HomePage() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
+  // If already signed in, go straight to dashboard
+  if (isSignedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <LandingPage />;
 }
 
 function ProtectedDashboard() {
@@ -50,7 +75,7 @@ function ProtectedDashboard() {
   }
 
   if (!isSignedIn) {
-    return <RedirectToSignIn />;
+    return <Navigate to="/sign-in" replace />;
   }
 
   return <Dashboard />;
