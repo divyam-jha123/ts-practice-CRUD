@@ -11,6 +11,7 @@ import { API_URL } from "../config";
 
 export const Dashboard = () => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [notes, setNotes] = useState<any[]>([]);
   const { getToken } = useAuth();
   const { user } = useUser();
 
@@ -22,7 +23,7 @@ export const Dashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(posts);
+      setNotes(posts.data.post || []);
     } catch (error) {
       console.error("Error fetching notes:", error);
     }
@@ -37,7 +38,7 @@ export const Dashboard = () => {
       const token = await getToken();
       await axios.post(`${API_URL}/notes/create-note`, {
         title: data.title,
-        content: data.link
+        link: data.link
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,7 +80,7 @@ export const Dashboard = () => {
         }}
       />
 
-      {/* Main Content */}
+      {/* Content */}
       <div className="ml-64 flex-1 p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -102,22 +103,18 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        {/* Cards Grid */}
+        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {notes.map((note) => (
             <Card
-            title="Sample Tweet"
-            type="tweet"
-            content="https://twitter.com/vibingmonk/status/2032893470067798524"
-            tags={["inspiration", "tweet"]}
-            addedDate="15/03/2024"
-          />
-          <Card
-            title="Sample youtube video"
-            type="video"
-            content="https://www.youtube.com/watch?v=2uoU7mXAXHo"
-            tags={["inspiration", "video"]}
-            addedDate="15/03/2024"
+              key={note._id}
+              title={note.title}
+              type={note.content?.includes("youtube") ? "video" : note.content?.includes("twitter") || note.content?.includes("x.com") ? "tweet" : "document"}
+              content={note.content}
+              tags={["content"]}
+              addedDate={new Date(note.createdAt).toLocaleDateString()}
             />
+          ))}
         </div>
       </div>
     </div>

@@ -23,7 +23,6 @@ router.post("/sync", requireAuth(), async (req: Request, res: Response) => {
       });
     }
 
-    // Upsert: create if doesn't exist, update if it does
     const user = await User.findOneAndUpdate(
       { clerkUserId: userId },
       { clerkUserId: userId, username, email },

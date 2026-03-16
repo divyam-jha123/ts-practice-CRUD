@@ -30,7 +30,6 @@ export const CreateModal = ({ isOpen, onClose, onSubmit }: CreateModalProps) => 
         setError("");
         onSubmit({ title: title.trim(), link: link.trim() })
 
-        // Reset form
         setTitle("");
         setLink("");
         onClose();
