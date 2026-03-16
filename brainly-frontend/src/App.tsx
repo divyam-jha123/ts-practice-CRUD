@@ -3,6 +3,7 @@ import { SignIn, SignUp, useAuth } from '@clerk/react';
 import { Dashboard } from './components/dashboard';
 import { SharedDashboard } from './components/sharedDashboard';
 import { LandingPage } from './components/landingPage';
+import { Loader } from './icons/loader';
 
 export default function App() {
   return (
@@ -49,9 +50,7 @@ function HomePage() {
 
   if (!isLoaded) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-gray-500">Loading...</div>
-      </div>
+      <Loader message="Loading..." />
     );
   }
 
@@ -69,7 +68,10 @@ function ProtectedDashboard() {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-gray-500">Loading...</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
       </div>
     );
   }
