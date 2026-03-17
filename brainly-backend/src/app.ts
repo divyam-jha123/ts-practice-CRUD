@@ -8,7 +8,28 @@ export function createApp() {
   const app = express();
 
   app.use(express.json());
-  app.use(cors());
+  const allowlist = (
+    process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",")
+      : [
+
+          // local dev
+          "http://localhost:5173",
+          "http://localhost:3000",
+        ]
+  )
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
+        if (allowlist.includes(origin)) return cb(null, true);
+        return cb(null, false);
+      },
+    }),
+  );
   app.use(clerkMiddleware());
 
   app.use("/notes", notesRouter);
