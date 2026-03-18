@@ -29,6 +29,7 @@ export const ShareModal = ({ isOpen, onClose, itemCount }: ShareModalProps) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          withCredentials: true,
         }
       );
 

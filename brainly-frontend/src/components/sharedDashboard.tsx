@@ -16,7 +16,9 @@ export const SharedDashboard = () => {
   useEffect(() => {
     const fetchSharedContent = async () => {
       try {
-        const response = await axios.get(`${API_URL}/notes/api/share/${hash}`);
+        const response = await axios.get(`${API_URL}/notes/api/share/${hash}`, {
+          withCredentials: true,
+        });
         setNotes(response.data.content || []);
       } catch (err: unknown) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {

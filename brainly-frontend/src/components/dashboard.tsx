@@ -54,6 +54,7 @@ export const Dashboard = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       });
       setNotes(posts.data.post || []);
     } catch (error) {
@@ -76,6 +77,7 @@ export const Dashboard = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       });
       getData();
     } catch (error) {
@@ -90,6 +92,7 @@ export const Dashboard = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       });
       getData();
     } catch (error) {
