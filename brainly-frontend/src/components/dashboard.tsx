@@ -28,6 +28,13 @@ type CreateNotePayload = {
   link: string;
 };
 
+const makeOptimisticNote = (data: CreateNotePayload): Note => ({
+  _id: `temp-${crypto.randomUUID()}`,
+  title: data.title,
+  content: data.link,
+  createdAt: new Date().toISOString(),
+});
+
 export const Dashboard = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
@@ -68,6 +75,9 @@ export const Dashboard = () => {
   }, [getData]);
 
   const createNote = async (data: CreateNotePayload) => {
+    const optimisticNote = makeOptimisticNote(data);
+    setNotes((prev) => [optimisticNote, ...prev]);
+
     try {
       const token = await getToken();
       await axios.post(`${API_URL}/notes/create-note`, {
@@ -79,13 +89,16 @@ export const Dashboard = () => {
         },
         withCredentials: true,
       });
-      getData();
     } catch (error) {
+      setNotes((prev) => prev.filter((note) => note._id !== optimisticNote._id));
       console.error("Error creating note:", error);
     }
   };
 
   const deleteNote = async (id: string) => {
+    const previousNotes = notes;
+    setNotes((prev) => prev.filter((note) => note._id !== id));
+
     try {
       const token = await getToken();
       await axios.delete(`${API_URL}/notes/${id}`, {
@@ -94,8 +107,8 @@ export const Dashboard = () => {
         },
         withCredentials: true,
       });
-      getData();
     } catch (error) {
+      setNotes(previousNotes);
       console.error("Error deleting note:", error);
     }
   };
