@@ -1,23 +1,17 @@
-import { useState , useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useExtensionBridge } from "../hooks/useExtensionBridge";
 
 export function ExtensionBanner() {
   const { status } = useExtensionBridge();
   const navigate = useNavigate();
-  const [dismissed, setDismissed] = useState(
-    () => localStorage.getItem("brainexpo_ext_banner_dismissed") === "true",
-  );
-  if(status === "not_installed" || status === "checking") {
-    useEffect(() => setDismissed(false), []);
-  }
+  const [dismissed, setDismissed] = useState(false);
 
   if (dismissed || status === "connected" || status === "checking") {
     return null;
   }
 
   function dismiss() {
-    localStorage.setItem("brainexpo_ext_banner_dismissed", "true");
     setDismissed(true);
   }
 

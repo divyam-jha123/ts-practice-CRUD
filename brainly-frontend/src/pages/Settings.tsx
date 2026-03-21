@@ -2,8 +2,8 @@ import { useExtensionBridge } from "../hooks/useExtensionBridge";
 import type { ExtensionStatus } from "../hooks/useExtensionBridge";
 import { Sidebar } from "../components/sidebar";
 
-const CHROME_STORE_URL =
-  "https://chromewebstore.google.com/detail/brainexpo/YOUR_EXTENSION_ID";
+// const CHROME_STORE_URL =
+//   "https://chromewebstore.google.com/detail/brainexpo/YOUR_EXTENSION_ID";
 
 export function Settings() {
   const { status } = useExtensionBridge();
