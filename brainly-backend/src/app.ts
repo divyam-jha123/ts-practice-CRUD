@@ -46,8 +46,8 @@ export function createApp() {
   // );
   app.use(clerkMiddleware());
 
-  app.use("/notes", notesRouter);
   app.use("/user", userRouter);
+  app.use("/notes", notesRouter);
   app.use("/email", emailRouter);
   app.use("/unsubscribe", unsubscribeRouter);
 
